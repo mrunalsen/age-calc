@@ -1,0 +1,29 @@
+*,
+::after,
+::before {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+    height: 100%;
+    overflow: hidden;
+}
+
+// body {
+//     background-color: rgb(230, 230, 230);
+//     color: gray;
+// }
+
+@layer base {
+
+    ul,
+    ol {
+        list-style: revert;
+        margin: revert;
+        padding: revert;
+    }
+}
