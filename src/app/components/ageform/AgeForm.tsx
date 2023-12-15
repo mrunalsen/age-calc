@@ -1,32 +1,51 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface AgeFormProps {
-    calculateAge: (birthday: Date) => void;
+    calculateAge: (enteredDate: Date, birthday: Date) => void;
 }
 
 const AgeForm: React.FC<AgeFormProps> = ({ calculateAge }) => {
+    const [enterday, setEnterday] = useState('');
     const [birthday, setBirthday] = useState('');
 
-    const handlechange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    useEffect(() => {
+        const formattedDate = new Date().toISOString().substring(0, 10);
+        setBirthday(formattedDate);
+
+    }, []);
+
+    const handleEnterdayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setEnterday(e.target.value);
+
+    };
+    const handleBirthdayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setBirthday(e.target.value);
     };
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const birthdate = new Date(birthday);
-        calculateAge(birthdate);
+        const enteredDate = new Date(enterday);
+        calculateAge(enteredDate, birthdate);
     };
 
     return (
         <form onSubmit={handleSubmit}>
             <input
                 type="date"
+                name="enterDay"
+                id="enterDay"
+                value={enterday}
+                onChange={handleEnterdayChange}
+            />
+            <input
+                type="date"
                 name="today"
                 id="today"
                 value={birthday}
-                onChange={handlechange}
+                onChange={handleBirthdayChange}
             />
-            <button type="submit">calcullate</button>
+            <button type="submit" disabled={!enterday}>calculate</button>
         </form>
     );
 };
