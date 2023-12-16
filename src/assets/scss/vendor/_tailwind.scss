@@ -2,3 +2,40 @@
 @tailwind components;
 @tailwind utilities;
 @tailwind variants;
+
+
+@layer base {
+    :root {
+        --color-primary: 255 255 255;
+        --color-secondary: 1 115 179;
+    }
+
+    @media (prefers-color-scheme:light) {
+        :root {
+            --color-primary: 255 255 255;
+            --color-secondary: 45 45 48;
+        }
+
+    }
+
+    @media (prefers-color-scheme:dark) {
+        :root {
+            --color-primary: 45 45 48;
+            // --color-secondary: 255 255 255;
+            --color-secondary: 240 240 240;
+        }
+
+    }
+
+    :root[data-theme="dark"] {
+        --color-primary: 45 45 48;
+        // --color-secondary: 255 255 255;
+        --color-secondary: 128 128 128;
+    }
+
+    :root[data-theme="light"] {
+        --color-primary: 255 255 255;
+        --color-secondary: 128 128 128;
+    }
+
+}

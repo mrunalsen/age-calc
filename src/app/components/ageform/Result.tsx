@@ -47,7 +47,7 @@ const Result: React.FC<ResultProps> = ({ setShowModal, age, birthDate }) => {
 
     return (
         <>
-            <div className="container flex flex-col place-content-center h-full bg-white">
+            <div className="bg-primary text-secondary container flex flex-col place-content-center h-full">
                 {/* Start : Result */}
                 <div className="grid grid-cols-2 pb-4">
                     {/* <div className="flex justify-between pb-4"> */}
