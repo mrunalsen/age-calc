@@ -43,7 +43,7 @@ const AgeCalculator: React.FC = () => {
     };
 
     return (
-        <div className=''>
+        <div className='container flex flex-col place-content-center h-full rounded-2xl'>
             <DateInputs onDatesSelected={calculateAge} />
             <CSSTransition
                 in={showModal}

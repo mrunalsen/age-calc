@@ -13,7 +13,7 @@
     @media (prefers-color-scheme:light) {
         :root {
             --color-primary: 255 255 255;
-            --color-secondary: 45 45 48;
+            --color-secondary: 128 128 128;
         }
 
     }
@@ -22,15 +22,15 @@
         :root {
             --color-primary: 45 45 48;
             // --color-secondary: 255 255 255;
-            --color-secondary: 240 240 240;
+            --color-secondary: 255 255 255;
         }
 
     }
 
     :root[data-theme="dark"] {
         --color-primary: 45 45 48;
-        // --color-secondary: 255 255 255;
-        --color-secondary: 128 128 128;
+        --color-secondary: 255 255 255;
+        // --color-secondary: 128 128 128;
     }
 
     :root[data-theme="light"] {
