@@ -17,7 +17,7 @@ const DateInputs: React.FC<DateInputsProps> = ({ onDatesSelected }) => {
 
     return (
         <form onSubmit={handleSubmit}>
-            <div className="flex justify-between">
+            <div className="flex justify-between py-2">
                 <label htmlFor='enterDate'>Enter Date :</label>
                 <input
                     type="date"
@@ -26,7 +26,7 @@ const DateInputs: React.FC<DateInputsProps> = ({ onDatesSelected }) => {
                     className="outline-none text-rose-500 cursor-pointer rounded-sm p-1"
                 />
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between py-2">
                 <label htmlFor='currentDate'>Today :</label>
                 <input
                     type="date"
