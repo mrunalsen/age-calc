@@ -4,8 +4,8 @@ import AgeCalculator from "./components/AgeCalculator";
 const Home = () => {
     return (
         <>
+            <Header />
             <div className="container flex flex-col place-content-center h-full bg-white rounded-2xl">
-                <Header />
                 <AgeCalculator />
             </div>
         </>

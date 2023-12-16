@@ -43,7 +43,7 @@ const AgeCalculator: React.FC = () => {
     };
 
     return (
-        <div className='mb-auto'>
+        <div className=''>
             <DateInputs onDatesSelected={calculateAge} />
             <CSSTransition
                 in={showModal}
