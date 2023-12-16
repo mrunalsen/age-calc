@@ -1,12 +1,11 @@
+import Header from "../../core/components/navigation/Header";
 import AgeCalculator from "./components/AgeCalculator";
 
 const Home = () => {
     return (
         <>
+            <Header />
             <div className="container flex flex-col place-content-center h-full bg-white rounded-2xl">
-                <header className='flex justify-center'>
-                    <h1>Age</h1>
-                </header>
                 <AgeCalculator />
             </div>
         </>

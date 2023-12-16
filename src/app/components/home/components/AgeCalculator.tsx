@@ -43,7 +43,7 @@ const AgeCalculator: React.FC = () => {
     };
 
     return (
-        <div>
+        <div className='relative'>
             <DateInputs onDatesSelected={calculateAge} />
             <CSSTransition
                 in={showModal}
