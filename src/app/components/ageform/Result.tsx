@@ -15,9 +15,16 @@ interface ResultProps {
 }
 
 const Result: React.FC<ResultProps> = ({ setShowModal, age, birthDate }) => {
+    const formattedtotaldays = age.totaldays.toLocaleString('en-IN');
+
     const totalhours = age.totaldays * 24;
+    const formattedtotalhours = totalhours.toLocaleString('en-IN');
+
     const totalminutes = totalhours * 60;
+    const formattedtotalminutes = totalminutes.toLocaleString('en-IN');
+
     const totalseconds = totalminutes * 60;
+    const formattedtotalseconds = totalseconds.toLocaleString('en-IN');
 
     const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -64,7 +71,7 @@ const Result: React.FC<ResultProps> = ({ setShowModal, age, birthDate }) => {
                         <div className="flex flex-col text-center justify-between">
                             <h4 className="text-rose-500 font-semibold">Next Birthday</h4>
                             <div className="flex justify-center">
-                                <span className="bi bi-cake bg-gradient-to-br from-rose-400 to-rose-500 text-white rounded-full p-4"></span>
+                                <span className="icon-cake bg-gradient-to-br from-rose-400 to-rose-500 text-white rounded-full p-4"></span>
                             </div>
                             <span className="text-xs font-semibold">{nextBirthdayDayOfWeek}</span>
                             <div className="flex justify-center text-xs">
@@ -95,19 +102,19 @@ const Result: React.FC<ResultProps> = ({ setShowModal, age, birthDate }) => {
                         </div>
                         <div className="flex flex-col">
                             <span className="text-xs font-light">Days</span>
-                            <span>{age.totaldays}</span>
+                            <span>{formattedtotaldays}</span>
                         </div>
                         <div className="flex flex-col">
                             <span className="text-xs font-light">Hours</span>
-                            <span>{totalhours}</span>
+                            <span>{formattedtotalhours}</span>
                         </div>
                         <div className="flex flex-col">
                             <span className="text-xs font-light">Minutes</span>
-                            <span>{totalminutes}</span>
+                            <span>{formattedtotalminutes}</span>
                         </div>
                         <div className="flex flex-col col-start-2">
                             <span className="text-xs font-light">Seconds</span>
-                            <span>{totalseconds}</span>
+                            <span>{formattedtotalseconds}</span>
                         </div>
                     </div>
                 </div>
