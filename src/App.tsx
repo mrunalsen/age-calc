@@ -1,4 +1,5 @@
 import './App.scss';
+import CoinFlip from './app/components/CoinFlip';
 import Home from './app/components/home/Home';
 import AgeCalculator from './app/components/home/components/AgeCalculator';
 import DateCalculator from './app/components/home/components/DateCalculator';
@@ -13,6 +14,7 @@ function App() {
         <Route index element={<Home />} />
         <Route path='/age-calculator' element={<AgeCalculator />} />
         <Route path='/date-calculator' element={<DateCalculator />} />
+        <Route path='/flip-a-coin' element={<CoinFlip />} />
       </Route>
     )
   );

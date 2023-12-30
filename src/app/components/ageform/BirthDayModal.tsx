@@ -1,7 +1,7 @@
 import { addYears, differenceInDays, differenceInMonths, getDay } from 'date-fns';
 import React from 'react';
 
-interface ResultProps {
+interface BirthDayModalProps {
     age: {
         years: number;
         months: number;
@@ -14,7 +14,7 @@ interface ResultProps {
     birthDate: Date | null;
 }
 
-const Result: React.FC<ResultProps> = ({ setShowModal, age, birthDate }) => {
+const BirthDayModal: React.FC<BirthDayModalProps> = ({ setShowModal, age, birthDate }) => {
     const formattedtotaldays = age.totaldays.toLocaleString('en-IN');
 
     const totalhours = age.totaldays * 24;
@@ -48,7 +48,7 @@ const Result: React.FC<ResultProps> = ({ setShowModal, age, birthDate }) => {
     return (
         <>
             <div className="bg-primary text-secondary container flex flex-col place-content-center h-full">
-                {/* Start : Result */}
+                {/* Start : BirthDayModal */}
                 <div className="grid grid-cols-2 pb-4">
                     {/* <div className="flex justify-between pb-4"> */}
                     {/* Start : Age */}
@@ -82,7 +82,7 @@ const Result: React.FC<ResultProps> = ({ setShowModal, age, birthDate }) => {
                         </div>)}
                     {/* End : Next Bday */}
                 </div>
-                {/* End : Result */}
+                {/* End : BirthDayModal */}
                 <hr />
                 {/* Start : Summary */}
                 <div className="text-center">
@@ -130,4 +130,4 @@ const Result: React.FC<ResultProps> = ({ setShowModal, age, birthDate }) => {
     );
 };
 
-export default Result;
+export default BirthDayModal;

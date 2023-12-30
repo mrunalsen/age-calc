@@ -13,6 +13,9 @@ const Home = () => {
                     <div>
                         <Link className="bg-rose-500 my-1 rounded" to={'/date-calculator'}>Date Calculator</Link>
                     </div>
+                    <div>
+                        <Link className="bg-rose-500 my-1 rounded" to={'/flip-a-coin'}>Flip a Coin</Link>
+                    </div>
                 </div>
                 {/* <AgeCalculator /> */}
             </div>

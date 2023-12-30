@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { differenceInYears, differenceInMonths, differenceInDays, differenceInWeeks } from 'date-fns';
 import DateInputs from '../../ageform/DateInputs';
-import Result from '../../ageform/Result';
+import BirthDayModal from '../../ageform/BirthDayModal';
 import { CSSTransition } from 'react-transition-group';
 
 const AgeCalculator: React.FC = () => {
@@ -58,7 +58,7 @@ const AgeCalculator: React.FC = () => {
                     ref={noderef}
                     className="absolute top-0 bottom-0 left-0 right-0"
                 >
-                    {age && <Result
+                    {age && <BirthDayModal
                         age={age}
                         setShowModal={setShowModal}
                         birthDate={birthDate}
