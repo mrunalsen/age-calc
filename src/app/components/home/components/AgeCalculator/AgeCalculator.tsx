@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { differenceInYears, differenceInMonths, differenceInDays, differenceInWeeks } from 'date-fns';
-import DateInputs from '../../ageform/DateInputs';
-import BirthDayModal from '../../ageform/BirthDayModal';
+import DateInputs from './DateInputs';
+import BirthDayModal from '../../../ageform/BirthDayModal';
 import { CSSTransition } from 'react-transition-group';
 
 const AgeCalculator: React.FC = () => {

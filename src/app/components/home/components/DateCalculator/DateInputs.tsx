@@ -1,5 +1,3 @@
-// src/components/DateInputs.tsx
-
 import React, { useState } from 'react';
 
 interface DateInputsProps {
@@ -8,12 +6,11 @@ interface DateInputsProps {
 
 const DateInputs: React.FC<DateInputsProps> = ({ onDatesSelected }) => {
     const [birthDate, setBirthDate] = useState<Date | null>(null);
-    // const [comparisonDate, setComparisonDate] = useState<Date | null>(null);
+    const [comparisonDate, setComparisonDate] = useState<Date | null>(null);
 
-    const handleSubmit = (e: any) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        const currentDate = new Date();
-        onDatesSelected(birthDate, currentDate);
+        onDatesSelected(birthDate, comparisonDate);
     };
 
     return (
@@ -27,7 +24,7 @@ const DateInputs: React.FC<DateInputsProps> = ({ onDatesSelected }) => {
                     className="outline-none text-rose-500 cursor-pointer rounded-sm p-1"
                 />
             </div>
-            {/* <div className="flex justify-between py-2">
+            <div className="flex justify-between py-2">
                 <label htmlFor='currentDate'>Today :</label>
                 <input
                     type="date"
@@ -35,7 +32,7 @@ const DateInputs: React.FC<DateInputsProps> = ({ onDatesSelected }) => {
                     onChange={(e) => setComparisonDate(new Date(e.target.value))}
                     className="outline-none text-rose-500 cursor-pointer rounded-sm p-1"
                 />
-            </div> */}
+            </div>
             <div className="flex justify-center mt-10">
                 <button
                     onClick={handleSubmit}

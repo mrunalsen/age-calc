@@ -1,8 +1,8 @@
 import './App.scss';
 import CoinFlip from './app/components/CoinFlip';
 import Home from './app/components/home/Home';
-import AgeCalculator from './app/components/home/components/AgeCalculator';
-import DateCalculator from './app/components/home/components/DateCalculator';
+import AgeCalculator from './app/components/home/components/AgeCalculator/AgeCalculator';
+import DateCalculator from './app/components/home/components/DateCalculator/DateCalculator';
 import Header from './app/core/components/navigation/Header';
 import { createBrowserRouter, createRoutesFromElements, Route, Outlet, RouterProvider } from 'react-router-dom';
 
@@ -21,13 +21,7 @@ function App() {
 
   return (
     <>
-      <div className="bg-primary text-secondary  transition-all duration-300  flex flex-col h-full">
-        <Header />
-        <div className="overflow-auto h-full">
-          {/* <Home /> */}
-          <RouterProvider router={router} />
-        </div>
-      </div>
+      <RouterProvider router={router} />
     </>
   );
 }
@@ -35,7 +29,12 @@ function App() {
 const Root = () => {
   return (
     <>
-      <Outlet />
+      <div className="bg-primary text-secondary  transition-all duration-300  flex flex-col h-full">
+        <Header />
+        <div className="overflow-auto h-full">
+          <Outlet />
+        </div>
+      </div>
     </>
   );
 };
