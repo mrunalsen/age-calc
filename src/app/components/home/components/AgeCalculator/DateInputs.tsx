@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 interface DateInputsProps {
     onDatesSelected: (birthdate: Date | null, comparisonDate: Date | null) => void;
@@ -29,6 +30,7 @@ const DateInputs: React.FC<DateInputsProps> = ({ onDatesSelected }) => {
                     onClick={handleSubmit}
                     className="text-sm bg-rose-500 text-white rounded p-2"
                 >calculate</button>
+                <Link to={'/'}>Home</Link>
             </div>
         </form>
     );

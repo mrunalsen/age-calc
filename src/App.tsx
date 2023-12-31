@@ -5,23 +5,23 @@ import AgeCalculator from './app/components/home/components/AgeCalculator/AgeCal
 import DateCalculator from './app/components/home/components/DateCalculator/DateCalculator';
 import Header from './app/core/components/navigation/Header';
 import { createBrowserRouter, createRoutesFromElements, Route, Outlet, RouterProvider } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 
 function App() {
-
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route path='/' element={<Root />}>
-        <Route index element={<Home />} />
-        <Route path='/age-calculator' element={<AgeCalculator />} />
-        <Route path='/date-calculator' element={<DateCalculator />} />
-        <Route path='/flip-a-coin' element={<CoinFlip />} />
+      <Route key={location.pathname} path='/' element={<Root />}>
+        <Route key={location.pathname} index element={<Home />} />
+        <Route key={location.pathname} path='/age-calculator' element={<AgeCalculator />} />
+        <Route key={location.pathname} path='/date-calculator' element={<DateCalculator />} />
+        <Route key={location.pathname} path='/flip-a-coin' element={<CoinFlip />} />
       </Route>
     )
   );
 
   return (
     <>
-      <RouterProvider router={router} />
+      <RouterProvider key={location.pathname} router={router} />
     </>
   );
 }
@@ -29,12 +29,14 @@ function App() {
 const Root = () => {
   return (
     <>
-      <div className="bg-primary text-secondary  transition-all duration-300  flex flex-col h-full">
-        <Header />
-        <div className="overflow-auto h-full">
-          <Outlet />
+      <AnimatePresence mode='wait' key={location.pathname}>
+        <div className="bg-primary text-secondary  transition-all duration-300  flex flex-col h-full">
+          <Header />
+          <div className="overflow-auto h-full">
+            <Outlet key={location.pathname} />
+          </div>
         </div>
-      </div>
+      </AnimatePresence>
     </>
   );
 };

@@ -1,8 +1,9 @@
 import React, { useRef, useState } from 'react';
 import { differenceInYears, differenceInMonths, differenceInDays, differenceInWeeks } from 'date-fns';
 import DateInputs from './DateInputs';
-import BirthDayModal from '../../../ageform/BirthDayModal';
+import BirthDayModal from './BirthDayModal';
 import { CSSTransition } from 'react-transition-group';
+import { motion } from 'framer-motion';
 
 const AgeCalculator: React.FC = () => {
     const [showModal, setShowModal] = useState(false);
@@ -43,8 +44,25 @@ const AgeCalculator: React.FC = () => {
     };
 
     return (
-        <div className='container flex flex-col place-content-center h-full rounded-2xl'>
-            <DateInputs onDatesSelected={calculateAge} />
+        <motion.div className='container flex flex-col place-content-center h-full rounded-2xl'
+            initial={{
+                opacity: 0
+            }}
+            animate={{
+                opacity: 1
+            }}
+            exit={{
+                opacity: 0
+            }}
+        >
+            <motion.div
+                initial={{ y: '200px' }}
+                animate={{ y: '0px' }}
+                exit={{ y: '200px' }}
+                transition={{ duration: .5, ease: 'easeInOut' }}
+            >
+                <DateInputs onDatesSelected={calculateAge} />
+            </motion.div>
             <CSSTransition
                 in={showModal}
                 timeout={300}
@@ -65,7 +83,7 @@ const AgeCalculator: React.FC = () => {
                     />}
                 </div>
             </CSSTransition>
-        </div>
+        </motion.div>
     );
 };
 

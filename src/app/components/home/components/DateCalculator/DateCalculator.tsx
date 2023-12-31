@@ -1,8 +1,10 @@
 import React, { useRef, useState } from 'react';
 import { differenceInYears, differenceInMonths, differenceInDays, differenceInWeeks } from 'date-fns';
 import DateInputs from './DateInputs';
-import BirthDayModal from '../../../ageform/BirthDayModal';
+import DateModal from './DateModal';
 import { CSSTransition } from 'react-transition-group';
+import { motion } from 'framer-motion';
+
 
 const DateCalculator: React.FC = () => {
     const [showModal, setShowModal] = useState(false);
@@ -43,8 +45,26 @@ const DateCalculator: React.FC = () => {
     };
 
     return (
-        <div className='container flex flex-col place-content-center h-full rounded-2xl'>
-            <DateInputs onDatesSelected={calculateAge} />
+        <motion.div className='container flex flex-col place-content-center h-full rounded-2xl'
+            initial={{
+                opacity: 0
+            }}
+            animate={{
+                opacity: 1
+            }}
+            transition={{ delay: .25, duration: .5, ease: 'easeInOut' }}
+            exit={{
+                opacity: 0
+            }}
+        >
+            <motion.div
+                initial={{ y: '200px' }}
+                animate={{ y: '0px' }}
+                exit={{ y: '200px' }}
+                transition={{ duration: .5, ease: 'easeInOut' }}
+            >
+                <DateInputs onDatesSelected={calculateAge} />
+            </motion.div>
             <CSSTransition
                 in={showModal}
                 timeout={300}
@@ -58,14 +78,14 @@ const DateCalculator: React.FC = () => {
                     ref={noderef}
                     className="absolute top-0 bottom-0 left-0 right-0"
                 >
-                    {age && <BirthDayModal
+                    {age && <DateModal
                         age={age}
                         setShowModal={setShowModal}
                         birthDate={birthDate}
                     />}
                 </div>
             </CSSTransition>
-        </div>
+        </motion.div>
     );
 };
 
