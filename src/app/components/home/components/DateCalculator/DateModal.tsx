@@ -1,4 +1,3 @@
-import { addYears, differenceInDays, differenceInMonths, getDay } from 'date-fns';
 import React from 'react';
 
 interface DateModalProps {
@@ -14,7 +13,7 @@ interface DateModalProps {
     birthDate: Date | null;
 }
 
-const DateModal: React.FC<DateModalProps> = ({ setShowModal, age, birthDate }) => {
+const DateModal: React.FC<DateModalProps> = ({ setShowModal, age }) => {
     const formattedtotaldays = age.totaldays.toLocaleString('en-IN');
 
     const totalhours = age.totaldays * 24;
@@ -26,23 +25,6 @@ const DateModal: React.FC<DateModalProps> = ({ setShowModal, age, birthDate }) =
     const totalseconds = totalminutes * 60;
     const formattedtotalseconds = totalseconds.toLocaleString('en-IN');
 
-    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
-    let nextBirthdayDayOfWeek = null;
-    let monthsUntilBirthday = null;
-    let remainingDays = null;
-
-    if (birthDate && age.years !== null) {
-        const nextBirthday = addYears(birthDate, age.years + 1);
-        const today = new Date();
-
-        const totalMonthsUntilBirthday = differenceInMonths(nextBirthday, today);
-        monthsUntilBirthday = totalMonthsUntilBirthday % 12;
-        remainingDays = differenceInDays(nextBirthday, today);
-
-        const dayOfWeekIndex = getDay(nextBirthday);
-        nextBirthdayDayOfWeek = daysOfWeek[dayOfWeekIndex];
-    }
 
 
     return (
