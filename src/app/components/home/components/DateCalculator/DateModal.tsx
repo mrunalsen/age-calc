@@ -29,7 +29,7 @@ const DateModal: React.FC<DateModalProps> = ({ setShowModal, age }) => {
 
     return (
         <>
-            <div className="bg-primary text-secondary container flex flex-col place-content-center h-full">
+            <div className="bg-primary text-secondary flex flex-col place-content-center h-full">
                 {/* Start : Summary */}
                 <div className='text-center'>
                     <h4 className="text-rose-500 font-semibold py-4">Difference between seleceted dates</h4>

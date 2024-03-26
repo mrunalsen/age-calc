@@ -32,7 +32,7 @@ const Root = () => {
       <AnimatePresence mode='wait' key={location.pathname}>
         <div className="bg-primary text-secondary  transition-all duration-300  flex flex-col h-full">
           <Header />
-          <div className="overflow-auto h-full">
+          <div className="overflow-hidden h-full">
             <Outlet key={location.pathname} />
           </div>
         </div>

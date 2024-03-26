@@ -25,12 +25,12 @@ const DateInputs: React.FC<DateInputsProps> = ({ onDatesSelected }) => {
                     className="outline-none text-rose-500 cursor-pointer rounded-sm p-1"
                 />
             </div>
-            <div className="flex justify-center mt-10">
+            <div className="flex flex-col justify-center mt-10">
                 <button
                     onClick={handleSubmit}
-                    className="text-sm bg-rose-500 text-white rounded p-2"
+                    className="text-sm bg-rose-500 text-white rounded p-2 mb-4"
                 >calculate</button>
-                <Link to={'/'}>Home</Link>
+                <Link to={'/'} className=' text-center'>Home</Link>
             </div>
         </form>
     );
