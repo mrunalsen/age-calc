@@ -32,7 +32,7 @@ const DateModal: React.FC<DateModalProps> = ({ setShowModal, age }) => {
             <div className="bg-primary text-secondary flex flex-col place-content-center h-full">
                 {/* Start : Summary */}
                 <div className='text-center'>
-                    <h4 className="text-rose-500 font-semibold py-4">Difference between seleceted dates</h4>
+                    <h4 className="text-rose-500 font-semibold py-4">Difference between selected dates</h4>
                     <div className="grid grid-cols-3 gap-4">
                         <div className="flex flex-col">
                             <span className="text-xs font-light">Years</span>
