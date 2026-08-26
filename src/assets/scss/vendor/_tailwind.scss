@@ -5,37 +5,11 @@
 
 
 @layer base {
+    // The app background is now the animated bubble gradient (see
+    // AnimatedBubblesBackground), so primary/secondary just need to work as
+    // a dark glass UI chrome layered on top of any of its color options.
     :root {
-        --color-primary: 255 255 255;
-        --color-secondary: 1 115 179;
-    }
-
-    @media (prefers-color-scheme:light) {
-        :root {
-            --color-primary: 255 255 255;
-            --color-secondary: 128 128 128;
-        }
-
-    }
-
-    @media (prefers-color-scheme:dark) {
-        :root {
-            --color-primary: 45 45 48;
-            // --color-secondary: 255 255 255;
-            --color-secondary: 255 255 255;
-        }
-
-    }
-
-    :root[data-theme="dark"] {
-        --color-primary: 45 45 48;
+        --color-primary: 17 14 26;
         --color-secondary: 255 255 255;
-        // --color-secondary: 128 128 128;
     }
-
-    :root[data-theme="light"] {
-        --color-primary: 255 255 255;
-        --color-secondary: 128 128 128;
-    }
-
 }

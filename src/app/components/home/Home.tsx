@@ -1,42 +1,67 @@
-import { Link } from "react-router-dom";
 import { motion } from 'framer-motion';
-const Home = () => {
-    const toggleTheme = () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', newTheme);
-    };
-    return (
-        <>
-            <motion.div className="container grid gap-3 place-content-center h-full rounded-2xl text-center"
-                initial={{
-                    opacity: 0
-                }}
-                animate={{
-                    opacity: 1
-                }}
-                exit={{
-                    opacity: 0
-                }}
-                transition={{ delay: .25, duration: .5, ease: 'easeInOut' }}
+import { useOutletContext } from 'react-router';
+import { Cake, CalendarRange, Coins } from 'lucide-react';
+import { RotatingCardStack, type StackCard } from '@/components/ui/card-stack';
+import type { BubbleBackgroundOption } from '@/components/ui/bubble-backgrounds';
 
-            >
-                <motion.div
-                    initial={{ y: '200px' }}
-                    animate={{ y: '0px' }}
-                    exit={{ y: '200px' }}
-                    transition={{ duration: .5, ease: 'easeInOut' }}
-                >
-                    <Link className="bg-rose-500 flex items-center justify-start p-4 mb-4 rounded text-white active:scale-50 transition-all duration-300" to={'/age-calculator'}><span className="icon-cake-main me-3"></span> Age Calculator</Link>
-                    <Link className="bg-rose-500 flex items-center justify-start p-4 mb-4 rounded text-white active:scale-50 transition-all duration-300" to={'/date-calculator'}><span className="icon-calendar me-3"></span> Date Calculator</Link>
-                    <Link className="bg-rose-500 flex items-center justify-start p-4 mb-4 rounded text-white active:scale-50 transition-all duration-300" to={'/flip-a-coin'}><span className="icon-coin me-3"></span> Flip a Coin</Link>
-                    <button onClick={toggleTheme} className="ms-auto">
-                        <span className="icon-light flex p-2"></span>
-                    </button>
-                </motion.div>
-            </motion.div>
-        </>
-    );
+const TOOLS: StackCard[] = [
+  {
+    id: 'flip-a-coin',
+    title: 'Flip a Coin',
+    description: 'Let chance make the call for you.',
+    icon: Coins,
+    href: '/flip-a-coin',
+  },
+  {
+    id: 'age-calculator',
+    title: 'Age Calculator',
+    description: 'Find out exactly how old you are, down to the day.',
+    icon: Cake,
+    href: '/age-calculator',
+  },
+  {
+    id: 'date-calculator',
+    title: 'Date Calculator',
+    description: 'Measure the distance between any two dates.',
+    icon: CalendarRange,
+    href: '/date-calculator',
+  },
+];
+
+const Home = () => {
+  const background = useOutletContext<BubbleBackgroundOption>();
+
+  return (
+    <motion.div
+      className="container grid h-full place-content-center gap-8 text-center"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ delay: 0.15, duration: 0.5, ease: 'easeInOut' }}
+    >
+      <motion.div
+        initial={{ y: 40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: 40, opacity: 0 }}
+        transition={{ duration: 0.5, ease: 'easeInOut' }}
+      >
+        <h1 className="text-3xl font-bold tracking-tight">Pocket Tools</h1>
+        <p className="mt-2 text-sm text-secondary/60">
+          Pick a card, or click one to bring it forward.
+        </p>
+      </motion.div>
+
+      <motion.div
+        className="flex justify-center"
+        initial={{ y: 40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: 40, opacity: 0 }}
+        transition={{ duration: 0.5, ease: 'easeInOut', delay: 0.05 }}
+      >
+        <RotatingCardStack cards={TOOLS} background={background} />
+      </motion.div>
+    </motion.div>
+  );
 };
 
 export default Home;

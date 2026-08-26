@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cp \"C:/Users/Mrunal/AppData/Local/Temp/claude/d--git-age-calc/1ba37069-99ce-46e5-8479-e4b57d3d57c0/scratchpad/smoke.js\" \"d:/git/age-calc/.smoke-test.js\")",
+      "Bash(node .smoke-test.js)",
+      "Bash(mv \"d:/git/age-calc/.smoke-test.js\" \"d:/git/age-calc/.smoke-test.cjs\")",
+      "Bash(node .smoke-test.cjs)",
+      "Read(//tmp/**)",
+      "Bash(netstat -ano)"
+    ]
+  }
+}
