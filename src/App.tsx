@@ -4,10 +4,14 @@ import CoinFlip from './app/components/CoinFlip';
 import Home from './app/components/home/Home';
 import AgeCalculator from './app/components/home/components/AgeCalculator/AgeCalculator';
 import DateCalculator from './app/components/home/components/DateCalculator/DateCalculator';
+import DiceRoller from './app/components/home/components/DiceRoller/DiceRoller';
+import TiltFold from './app/components/home/components/TiltFold/TiltFold';
 import Header from './app/core/components/navigation/Header';
 import { SplashScreen } from './components/ui/splash-screen';
 import { AnimatedBubblesBackground } from './components/ui/animated-bubbles-background';
 import { BUBBLE_BACKGROUNDS, type BubbleBackgroundOption } from './components/ui/bubble-backgrounds';
+import { skipActiveViewTransition } from './components/ui/view-transition-registry';
+import { HeaderVisibilityContext } from './components/ui/header-visibility';
 import { createBrowserRouter, createRoutesFromElements, Route, Outlet, RouterProvider, useLocation } from 'react-router';
 import { AnimatePresence } from 'framer-motion';
 
@@ -22,9 +26,16 @@ const getInitialBackground = (): BubbleBackgroundOption => {
 const Root = () => {
   const location = useLocation();
   const [background, setBackground] = useState<BubbleBackgroundOption>(getInitialBackground);
+  const [headerHidden, setHeaderHidden] = useState(false);
 
   useEffect(() => {
+    // Force-finish any in-flight theme ripple so its screenshot overlay
+    // can't get stranded on top of the page we're navigating to.
+    skipActiveViewTransition();
     window.scrollTo(0, 0);
+    // A tool page that hid the header (e.g. a fullscreen viewer) may unmount
+    // without a chance to restore it - always start the next page with it shown.
+    setHeaderHidden(false);
   }, [location.pathname]);
 
   const handleBackgroundChange = (option: BubbleBackgroundOption) => {
@@ -35,12 +46,14 @@ const Root = () => {
   return (
     <div className="flex h-full flex-col text-secondary">
       <AnimatedBubblesBackground option={background} />
-      <Header background={background} onBackgroundChange={handleBackgroundChange} />
-      <div className="flex-1 overflow-hidden pt-20">
-        <AnimatePresence mode="wait">
-          <Outlet key={location.pathname} context={background} />
-        </AnimatePresence>
-      </div>
+      <HeaderVisibilityContext.Provider value={{ hidden: headerHidden, setHidden: setHeaderHidden }}>
+        {!headerHidden && <Header background={background} onBackgroundChange={handleBackgroundChange} />}
+        <div className="flex-1 overflow-hidden pt-20">
+          <AnimatePresence mode="wait">
+            <Outlet key={location.pathname} context={background} />
+          </AnimatePresence>
+        </div>
+      </HeaderVisibilityContext.Provider>
     </div>
   );
 };
@@ -52,6 +65,8 @@ const router = createBrowserRouter(
       <Route path="/age-calculator" element={<AgeCalculator />} />
       <Route path="/date-calculator" element={<DateCalculator />} />
       <Route path="/flip-a-coin" element={<CoinFlip />} />
+      <Route path="/dice-roller" element={<DiceRoller />} />
+      <Route path="/tilt-fold" element={<TiltFold />} />
     </Route>
   )
 );

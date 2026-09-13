@@ -1,32 +1,8 @@
 import { motion } from 'framer-motion';
 import { useOutletContext } from 'react-router';
-import { Cake, CalendarRange, Coins } from 'lucide-react';
-import { RotatingCardStack, type StackCard } from '@/components/ui/card-stack';
+import { RotatingCardStack } from '@/components/ui/card-stack';
 import type { BubbleBackgroundOption } from '@/components/ui/bubble-backgrounds';
-
-const TOOLS: StackCard[] = [
-  {
-    id: 'flip-a-coin',
-    title: 'Flip a Coin',
-    description: 'Let chance make the call for you.',
-    icon: Coins,
-    href: '/flip-a-coin',
-  },
-  {
-    id: 'age-calculator',
-    title: 'Age Calculator',
-    description: 'Find out exactly how old you are, down to the day.',
-    icon: Cake,
-    href: '/age-calculator',
-  },
-  {
-    id: 'date-calculator',
-    title: 'Date Calculator',
-    description: 'Measure the distance between any two dates.',
-    icon: CalendarRange,
-    href: '/date-calculator',
-  },
-];
+import { TOOLS } from './tools';
 
 const Home = () => {
   const background = useOutletContext<BubbleBackgroundOption>();

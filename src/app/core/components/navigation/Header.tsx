@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 import { Sparkles } from 'lucide-react';
 import { BackgroundPicker } from '@/components/ui/background-picker';
+import { HeaderSearch } from '@/components/ui/header-search';
 import type { BubbleBackgroundOption } from '@/components/ui/bubble-backgrounds';
 
 interface HeaderProps {
@@ -18,7 +19,10 @@ const Header = ({ background, onBackgroundChange }: HeaderProps) => {
           </span>
           <h2 className="text-base font-semibold tracking-tight">Pocket Tools</h2>
         </Link>
-        <BackgroundPicker value={background} onChange={onBackgroundChange} />
+        <div className="flex items-center gap-2">
+          <HeaderSearch />
+          <BackgroundPicker value={background} onChange={onBackgroundChange} />
+        </div>
       </div>
     </header>
   );

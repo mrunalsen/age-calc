@@ -3,10 +3,15 @@ import { flushSync } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Palette } from 'lucide-react';
 import { BUBBLE_BACKGROUNDS, type BubbleBackgroundOption } from './bubble-backgrounds';
+import { registerViewTransition } from './view-transition-registry';
 import { cn } from './utils';
 
 interface ViewTransitionDocument extends Document {
-  startViewTransition?: (callback: () => void) => { ready: Promise<void> };
+  startViewTransition?: (callback: () => void) => {
+    ready: Promise<void>;
+    finished: Promise<void>;
+    skipTransition: () => void;
+  };
 }
 
 interface BackgroundPickerProps {
@@ -48,6 +53,7 @@ export const BackgroundPicker = ({ value, onChange, className }: BackgroundPicke
     const transition = doc.startViewTransition(() => {
       flushSync(() => onChange(option));
     });
+    registerViewTransition(transition);
     setOpen(false);
 
     try {
