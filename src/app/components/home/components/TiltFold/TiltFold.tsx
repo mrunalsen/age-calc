@@ -8,8 +8,26 @@ import { useHeaderVisibility } from '@/components/ui/header-visibility';
 import type { BubbleBackgroundOption } from '@/components/ui/bubble-backgrounds';
 
 const SMOOTHING = 0.12;
-const FEATHER_WIDTH = 55;
+const FEATHER_WIDTH = 75;
 const MAX_TILT_DEG = 30;
+
+const smoothstep = (t: number) => t * t * (3 - 2 * t);
+
+// Builds the shared fold shape as an eased multi-stop gradient (instead of a
+// flat two-color fade) so the edge reads as a gradual vignette, and ends in
+// fully opaque black rather than trailing off at partial opacity.
+const buildFoldGradient = (angleDeg: number, stop1: number, stop2: number) => {
+  const steps = 10;
+  const stops = [`transparent 0%`, `transparent ${stop1}%`];
+  for (let i = 1; i <= steps; i++) {
+    const f = i / steps;
+    const alpha = smoothstep(f);
+    const pos = stop1 + (stop2 - stop1) * f;
+    stops.push(`rgba(0, 0, 0, ${alpha.toFixed(3)}) ${pos}%`);
+  }
+  stops.push(`black 100%`);
+  return `linear-gradient(${angleDeg}deg, ${stops.join(', ')})`;
+};
 
 interface DeviceOrientationEventIOS {
   requestPermission?: () => Promise<'granted' | 'denied'>;
@@ -107,17 +125,11 @@ const TiltFoldImage = ({ src, className, onError }: TiltFoldImageProps) => {
       const gradAngleDeg = targetIsRight.current ? 90 : 270;
       const stop1 = (1 - smoothedProgress.current) * 100;
       const stop2 = Math.min(100, stop1 + FEATHER_WIDTH);
-      // Extra in-between stops (instead of a plain two-color fade) bend the
-      // falloff into a soft S-curve so the edge reads as a gradual vignette
-      // rather than a hard line sweeping across the photo.
-      const quarter = stop1 + (stop2 - stop1) * 0.25;
-      const mid = stop1 + (stop2 - stop1) * 0.5;
-      const threeQuarter = stop1 + (stop2 - stop1) * 0.75;
-      const gradient = `linear-gradient(${gradAngleDeg}deg, transparent 0%, transparent ${stop1}%, rgba(0,0,0,0.15) ${quarter}%, rgba(0,0,0,0.5) ${mid}%, rgba(0,0,0,0.85) ${threeQuarter}%, black ${stop2}%, black 100%)`;
+      const gradient = buildFoldGradient(gradAngleDeg, stop1, stop2);
 
       const blurOpacity = Math.min(1, smoothedProgress.current * 1.3);
       const blurPx = smoothedProgress.current * 14;
-      const dimOpacity = smoothedProgress.current * 0.85;
+      const dimOpacity = Math.min(1, smoothedProgress.current * 1.3);
 
       const blurLayer = blurLayerRef.current;
       if (blurLayer) {
