@@ -8,8 +8,19 @@ import { useHeaderVisibility } from '@/components/ui/header-visibility';
 import type { BubbleBackgroundOption } from '@/components/ui/bubble-backgrounds';
 
 const SMOOTHING = 0.12;
-const FEATHER_WIDTH = 75;
-const MAX_TILT_DEG = 30;
+const FEATHER_WIDTH = 45;
+const MAX_TILT_DEG = 22;
+const BLUR_MAX_PX = 20;
+const BLUR_OPACITY_MULTIPLIER = 1.6;
+// Saturates the spatial sweep (how much of the image is covered) before raw
+// progress hits a literal 1 - a real phone tilt or a mouse near the edge
+// rarely reaches the mathematical max, so without this boost the fold never
+// quite reaches the far end of the image at "full" tilt.
+const SPATIAL_PROGRESS_BOOST = 1.6;
+// The dark tint rides along with the blur (not just a hint at the very end)
+// so the blurred area reads as genuinely dark, capped well short of solid black.
+const DIM_START = 0.15;
+const DIM_MAX_OPACITY = 0.55;
 
 const smoothstep = (t: number) => t * t * (3 - 2 * t);
 
@@ -123,13 +134,15 @@ const TiltFoldImage = ({ src, className, onError }: TiltFoldImageProps) => {
       smoothedProgress.current += (targetProgress.current - smoothedProgress.current) * SMOOTHING;
 
       const gradAngleDeg = targetIsRight.current ? 90 : 270;
-      const stop1 = (1 - smoothedProgress.current) * 100;
+      const spatialProgress = Math.min(1, smoothedProgress.current * SPATIAL_PROGRESS_BOOST);
+      const stop1 = (1 - spatialProgress) * 100;
       const stop2 = Math.min(100, stop1 + FEATHER_WIDTH);
       const gradient = buildFoldGradient(gradAngleDeg, stop1, stop2);
 
-      const blurOpacity = Math.min(1, smoothedProgress.current * 1.3);
-      const blurPx = smoothedProgress.current * 14;
-      const dimOpacity = Math.min(1, smoothedProgress.current * 1.3);
+      const blurOpacity = Math.min(1, smoothedProgress.current * BLUR_OPACITY_MULTIPLIER);
+      const blurPx = smoothedProgress.current * BLUR_MAX_PX;
+      const dimT = Math.max(0, (smoothedProgress.current - DIM_START) / (1 - DIM_START));
+      const dimOpacity = dimT * DIM_MAX_OPACITY;
 
       const blurLayer = blurLayerRef.current;
       if (blurLayer) {
