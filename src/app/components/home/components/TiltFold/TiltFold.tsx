@@ -9,30 +9,45 @@ import type { BubbleBackgroundOption } from '@/components/ui/bubble-backgrounds'
 
 const SMOOTHING = 0.12;
 const FEATHER_WIDTH = 45;
-const MAX_TILT_DEG = 22;
+const MAX_TILT_DEG = 26;
 const BLUR_MAX_PX = 20;
-const BLUR_OPACITY_MULTIPLIER = 1.6;
-// Saturates the spatial sweep (how much of the image is covered) before raw
-// progress hits a literal 1 - a real phone tilt or a mouse near the edge
-// rarely reaches the mathematical max, so without this boost the fold never
-// quite reaches the far end of the image at "full" tilt.
-const SPATIAL_PROGRESS_BOOST = 1.6;
+const BLUR_OPACITY_MULTIPLIER = 1.4;
 // The dark tint rides along with the blur (not just a hint at the very end)
 // so the blurred area reads as genuinely dark, capped well short of solid black.
-const DIM_START = 0.15;
-const DIM_MAX_OPACITY = 0.55;
+const DIM_START = 0.35;
+const DIM_MAX_OPACITY = 0.45;
+// Past this much tilt, the far (untouched) side is lifted off zero toward a
+// soft floor instead of staying perfectly sharp - without it, the fixed-width
+// feather either leaves a permanently crisp sliver at full tilt, or (if
+// shrunk to compensate) squeezes the whole fade into a harsh, narrow band.
+const FLOOR_START = 0.7;
+const FLOOR_MAX_ALPHA = 0.55;
+// A small 3D perspective tilt creeps in alongside the fold, most noticeable
+// near full tilt - the photo rotates around the vertical (Y) axis so its far
+// side recedes behind the plane, rather than spinning flat in place.
+const MAX_TILT_ROTATE_DEG = 8;
+const PERSPECTIVE_PX = 900;
+// The rotated plane's receding edge foreshortens inward, which would expose
+// the black backdrop behind it - a slight overscale (growing only as far as
+// the current tilt needs) keeps the frame full without ever being noticeable
+// as a "zoom", since it's zero at rest and small even at full tilt.
+const MAX_TILT_OVERSCALE = 1.16;
 
 const smoothstep = (t: number) => t * t * (3 - 2 * t);
 
 // Builds the shared fold shape as an eased multi-stop gradient (instead of a
-// flat two-color fade) so the edge reads as a gradual vignette, and ends in
-// fully opaque black rather than trailing off at partial opacity.
-const buildFoldGradient = (angleDeg: number, stop1: number, stop2: number) => {
+// flat two-color fade) so the edge reads as a gradual vignette. `floorAlpha`
+// raises the pre-ramp baseline (instead of pure transparent) so the far edge
+// softly joins in near full tilt rather than staying crisp right up to a
+// sudden cutoff.
+const buildFoldGradient = (angleDeg: number, stop1: number, stop2: number, floorAlpha: number) => {
   const steps = 10;
-  const stops = [`transparent 0%`, `transparent ${stop1}%`];
+  const floor = `rgba(0, 0, 0, ${floorAlpha.toFixed(3)})`;
+  const stops = [`${floor} 0%`, `${floor} ${stop1}%`];
   for (let i = 1; i <= steps; i++) {
     const f = i / steps;
-    const alpha = smoothstep(f);
+    const eased = smoothstep(f);
+    const alpha = floorAlpha + (1 - floorAlpha) * eased;
     const pos = stop1 + (stop2 - stop1) * f;
     stops.push(`rgba(0, 0, 0, ${alpha.toFixed(3)}) ${pos}%`);
   }
@@ -57,6 +72,7 @@ interface TiltFoldImageProps {
 // frame so the 60fps loop never triggers a React re-render.
 const TiltFoldImage = ({ src, className, onError }: TiltFoldImageProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const rotatorRef = useRef<HTMLDivElement>(null);
   const blurLayerRef = useRef<HTMLImageElement>(null);
   const dimLayerRef = useRef<HTMLDivElement>(null);
 
@@ -134,15 +150,17 @@ const TiltFoldImage = ({ src, className, onError }: TiltFoldImageProps) => {
       smoothedProgress.current += (targetProgress.current - smoothedProgress.current) * SMOOTHING;
 
       const gradAngleDeg = targetIsRight.current ? 90 : 270;
-      const spatialProgress = Math.min(1, smoothedProgress.current * SPATIAL_PROGRESS_BOOST);
-      const stop1 = (1 - spatialProgress) * 100;
+      const stop1 = (1 - smoothedProgress.current) * 100;
       const stop2 = Math.min(100, stop1 + FEATHER_WIDTH);
-      const gradient = buildFoldGradient(gradAngleDeg, stop1, stop2);
+      const floorT = Math.max(0, (smoothedProgress.current - FLOOR_START) / (1 - FLOOR_START));
+      const floorAlpha = floorT * FLOOR_MAX_ALPHA;
+      const gradient = buildFoldGradient(gradAngleDeg, stop1, stop2, floorAlpha);
 
       const blurOpacity = Math.min(1, smoothedProgress.current * BLUR_OPACITY_MULTIPLIER);
       const blurPx = smoothedProgress.current * BLUR_MAX_PX;
       const dimT = Math.max(0, (smoothedProgress.current - DIM_START) / (1 - DIM_START));
       const dimOpacity = dimT * DIM_MAX_OPACITY;
+      const rotateDeg = smoothedProgress.current * MAX_TILT_ROTATE_DEG * (targetIsRight.current ? 1 : -1);
 
       const blurLayer = blurLayerRef.current;
       if (blurLayer) {
@@ -156,6 +174,11 @@ const TiltFoldImage = ({ src, className, onError }: TiltFoldImageProps) => {
       if (dimLayer) {
         dimLayer.style.opacity = String(dimOpacity);
         dimLayer.style.background = gradient;
+      }
+
+      const rotator = rotatorRef.current;
+      if (rotator) {
+        rotator.style.transform = `rotateY(${rotateDeg}deg)`;
       }
 
       rafId = requestAnimationFrame(tick);
@@ -172,17 +195,27 @@ const TiltFoldImage = ({ src, className, onError }: TiltFoldImageProps) => {
   }, []);
 
   return (
-    <div ref={containerRef} className={cn('relative overflow-hidden', className)}>
-      <img src={src} alt="" className="absolute inset-0 h-full w-full object-cover" onError={onError} />
-      <img
-        ref={blurLayerRef}
-        src={src}
-        alt=""
-        aria-hidden
-        className="absolute inset-0 h-full w-full object-cover"
-        style={{ opacity: 0 }}
-      />
-      <div ref={dimLayerRef} className="pointer-events-none absolute inset-0" style={{ opacity: 0 }} />
+    <div
+      ref={containerRef}
+      className={cn('relative overflow-hidden', className)}
+      style={{ perspective: `${PERSPECTIVE_PX}px` }}
+    >
+      <div ref={rotatorRef} className="absolute inset-0" style={{ transformStyle: 'preserve-3d' }}>
+        {/* Scaled up once, statically, from load - not tied to tilt progress -
+            so the rotated plane's receding edge never exposes the backdrop. */}
+        <div className="absolute inset-0" style={{ transform: `scale(${MAX_TILT_OVERSCALE})` }}>
+          <img src={src} alt="" className="absolute inset-0 h-full w-full object-cover" onError={onError} />
+          <img
+            ref={blurLayerRef}
+            src={src}
+            alt=""
+            aria-hidden
+            className="absolute inset-0 h-full w-full object-cover"
+            style={{ opacity: 0 }}
+          />
+          <div ref={dimLayerRef} className="pointer-events-none absolute inset-0" style={{ opacity: 0 }} />
+        </div>
+      </div>
 
       {needsMotionPermission && (
         <button
