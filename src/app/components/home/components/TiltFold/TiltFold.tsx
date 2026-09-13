@@ -18,6 +18,7 @@ interface DeviceOrientationEventIOS {
 interface TiltFoldImageProps {
   src: string;
   className?: string;
+  onError?: () => void;
 }
 
 // Horizontal input (mouse x, touch x, or phone gyro tilt) drives a
@@ -25,7 +26,7 @@ interface TiltFoldImageProps {
 // itself never transforms - only the blur layer's filter/opacity and both
 // layers' gradient masks change, driven straight through refs each animation
 // frame so the 60fps loop never triggers a React re-render.
-const TiltFoldImage = ({ src, className }: TiltFoldImageProps) => {
+const TiltFoldImage = ({ src, className, onError }: TiltFoldImageProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const blurLayerRef = useRef<HTMLImageElement>(null);
   const dimLayerRef = useRef<HTMLDivElement>(null);
@@ -141,7 +142,7 @@ const TiltFoldImage = ({ src, className }: TiltFoldImageProps) => {
 
   return (
     <div ref={containerRef} className={cn('relative overflow-hidden', className)}>
-      <img src={src} alt="" className="absolute inset-0 h-full w-full object-cover" />
+      <img src={src} alt="" className="absolute inset-0 h-full w-full object-cover" onError={onError} />
       <img
         ref={blurLayerRef}
         src={src}
@@ -186,7 +187,18 @@ const TiltFold = () => {
     }
     setError(null);
     const reader = new FileReader();
-    reader.onload = () => setImageSrc(reader.result as string);
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      // Some phones save camera photos in formats (HEIC, etc.) that not every
+      // mobile browser can decode. FileReader happily reads the raw bytes
+      // either way, so probe-decode before showing it - otherwise a bad
+      // format shows up as a silent broken-image icon on the fullscreen view.
+      const probe = new Image();
+      probe.onload = () => setImageSrc(dataUrl);
+      probe.onerror = () =>
+        setError("Couldn't display that photo - it may be in a format this browser can't show. Try a JPEG or PNG.");
+      probe.src = dataUrl;
+    };
     reader.onerror = () => setError('Could not read that image. Try a different file.');
     reader.readAsDataURL(file);
   };
@@ -288,7 +300,14 @@ const TiltFold = () => {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
           >
-            <TiltFoldImage src={imageSrc} className="h-full w-full" />
+            <TiltFoldImage
+              src={imageSrc}
+              className="h-full w-full"
+              onError={() => {
+                setImageSrc(null);
+                setError("Couldn't display that photo - it may be in a format this browser can't show. Try a JPEG or PNG.");
+              }}
+            />
 
             <div className="pointer-events-none fixed inset-x-0 bottom-6 z-30 flex justify-center px-4">
               <div className="pointer-events-auto flex items-center gap-3 rounded-full border border-white/10 bg-primary/70 px-4 py-2.5 shadow-lg shadow-black/30 backdrop-blur-xl">
