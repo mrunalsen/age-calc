@@ -8,7 +8,7 @@ import { useHeaderVisibility } from '@/components/ui/header-visibility';
 import type { BubbleBackgroundOption } from '@/components/ui/bubble-backgrounds';
 
 const SMOOTHING = 0.12;
-const FEATHER_WIDTH = 15;
+const FEATHER_WIDTH = 55;
 const MAX_TILT_DEG = 30;
 
 interface DeviceOrientationEventIOS {
@@ -107,7 +107,13 @@ const TiltFoldImage = ({ src, className, onError }: TiltFoldImageProps) => {
       const gradAngleDeg = targetIsRight.current ? 90 : 270;
       const stop1 = (1 - smoothedProgress.current) * 100;
       const stop2 = Math.min(100, stop1 + FEATHER_WIDTH);
-      const gradient = `linear-gradient(${gradAngleDeg}deg, transparent 0%, transparent ${stop1}%, black ${stop2}%, black 100%)`;
+      // Extra in-between stops (instead of a plain two-color fade) bend the
+      // falloff into a soft S-curve so the edge reads as a gradual vignette
+      // rather than a hard line sweeping across the photo.
+      const quarter = stop1 + (stop2 - stop1) * 0.25;
+      const mid = stop1 + (stop2 - stop1) * 0.5;
+      const threeQuarter = stop1 + (stop2 - stop1) * 0.75;
+      const gradient = `linear-gradient(${gradAngleDeg}deg, transparent 0%, transparent ${stop1}%, rgba(0,0,0,0.15) ${quarter}%, rgba(0,0,0,0.5) ${mid}%, rgba(0,0,0,0.85) ${threeQuarter}%, black ${stop2}%, black 100%)`;
 
       const blurOpacity = Math.min(1, smoothedProgress.current * 1.3);
       const blurPx = smoothedProgress.current * 14;
